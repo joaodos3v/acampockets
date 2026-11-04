@@ -253,7 +253,46 @@
   .photos { display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 9.5rem; gap: .6rem; }
   .photos figure { margin: 0; overflow: hidden; border-radius: .5rem; background: var(--char-2); position: relative; }
   .photos img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.85) contrast(1.05); transition: transform .6s ease; }
-  .photos figure:hover img { transform: scale(1.04); }
+  .photo-btn { all: unset; display: block; width: 100%; height: 100%; cursor: zoom-in; }
+  .photo-btn:focus-visible { outline: 3px solid var(--ember); outline-offset: -3px; }
+  .photos figure:hover img, .photo-btn:focus-visible img { transform: scale(1.04); }
+
+  /* lightbox */
+  .lightbox {
+    width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+    background: var(--black); color: var(--bone); overflow: hidden;
+  }
+  .lightbox::backdrop { background: rgba(0, 0, 0, .6); }
+  .lightbox[open] { display: grid; grid-template-rows: auto 1fr auto; animation: fadein .25s ease; }
+  .lb-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: calc(.75rem + env(safe-area-inset-top, 0px)) var(--gutter) .75rem;
+  }
+  .lb-count { font-family: var(--display); font-weight: 800; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+  .lb-stage { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 0 var(--gutter); touch-action: pan-y; }
+  .lb-stage img {
+    max-width: 100%; max-height: 100%; object-fit: contain; border-radius: .5rem; user-select: none; -webkit-user-drag: none;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .lb-stage img.leaving { opacity: 0; transform: translateX(calc(var(--dir, 1) * -24px)); }
+  .lb-caption { text-align: center; color: var(--bone-dim); margin: 0 auto; padding: .9rem var(--gutter) calc(1rem + env(safe-area-inset-bottom, 0px)); max-width: 60ch; }
+  .lb-btn {
+    display: grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%; cursor: pointer;
+    background: rgba(243, 231, 211, .12); color: var(--bone); border: 1px solid rgba(243, 231, 211, .25);
+    transition: background .2s ease, color .2s ease;
+  }
+  .lb-btn:hover { background: var(--brasa); border-color: var(--brasa); color: var(--black); }
+  .lb-btn svg { width: 1.4rem; height: 1.4rem; }
+  .lb-prev, .lb-next { position: absolute; top: 50%; transform: translateY(-50%); z-index: 1; }
+  .lb-prev { left: max(.5rem, calc(var(--gutter) - 1.5rem)); }
+  .lb-next { right: max(.5rem, calc(var(--gutter) - 1.5rem)); }
+  @media (max-width: 599px) {
+    /* on phones the arrows move under the photo so they never cover it */
+    .lb-prev, .lb-next { top: auto; bottom: -3.75rem; transform: none; }
+    .lb-prev { left: var(--gutter); }
+    .lb-next { right: var(--gutter); }
+    .lb-caption { padding-inline: 4.5rem; min-height: 4.5rem; }
+  }
   .photos .tall { grid-row: span 2; }
   .photos .wide { grid-column: span 2; }
   @media (min-width: 800px) {
@@ -586,6 +625,25 @@
   <a class="btn" data-link="form" href="#" target="_blank" rel="noopener">Garantir minha inscrição</a>
 </div>
 
+<dialog class="lightbox" id="lightbox" aria-label="Galeria de fotos">
+  <div class="lb-top">
+    <span class="lb-count" aria-live="polite"></span>
+    <button type="button" class="lb-btn" data-lb="close" aria-label="Fechar galeria">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="lb-stage">
+    <button type="button" class="lb-btn lb-prev" data-lb="prev" aria-label="Foto anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <img alt="">
+    <button type="button" class="lb-btn lb-next" data-lb="next" aria-label="Próxima foto">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <p class="lb-caption"></p>
+</dialog>
+
 <script>
   // ============================================================
   //  LINKS — troque aqui quando tiver os definitivos
@@ -652,6 +710,70 @@
     });
   }, { threshold: 0.35, rootMargin: "0px 0px -10% 0px" });
   document.querySelectorAll(".reveal, .pillar").forEach((el) => io.observe(el));
+
+  // Gallery lightbox: click a photo to open it full screen, then browse with arrows, keys or swipe
+  (function lightbox() {
+    const dialog = document.getElementById("lightbox");
+    const img = dialog.querySelector(".lb-stage img");
+    const count = dialog.querySelector(".lb-count");
+    const caption = dialog.querySelector(".lb-caption");
+    const photos = [...document.querySelectorAll(".photos img")];
+    let index = 0, opener = null;
+
+    photos.forEach((photo, i) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "photo-btn";
+      btn.setAttribute("aria-label", `Ampliar foto: ${photo.alt}`);
+      photo.replaceWith(btn);
+      btn.append(photo);
+      btn.addEventListener("click", () => { opener = btn; show(i, 0); dialog.showModal(); });
+    });
+
+    function show(i, dir) {
+      index = (i + photos.length) % photos.length;
+      const src = photos[index].dataset.full || photos[index].currentSrc || photos[index].src;
+      const apply = () => {
+        img.src = src;
+        img.alt = photos[index].alt;
+        caption.textContent = photos[index].alt;
+        count.textContent = `${index + 1} / ${photos.length}`;
+        img.classList.remove("leaving");
+      };
+      if (dir && !reduceMotion) {
+        img.style.setProperty("--dir", dir);
+        img.classList.add("leaving");
+        setTimeout(apply, 180);
+      } else apply();
+      // warm up the neighbours so swiping feels instant
+      [index - 1, index + 1].forEach((n) => { new Image().src = photos[(n + photos.length) % photos.length].src; });
+    }
+    const next = () => show(index + 1, 1);
+    const prev = () => show(index - 1, -1);
+
+    dialog.addEventListener("click", (e) => {
+      const action = e.target.closest("[data-lb]")?.dataset.lb;
+      if (action === "next") next();
+      else if (action === "prev") prev();
+      else if (action === "close" || e.target === dialog || e.target.classList.contains("lb-stage")) dialog.close();
+    });
+    dialog.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") { e.preventDefault(); next(); }
+      if (e.key === "ArrowLeft") { e.preventDefault(); prev(); }
+    });
+    dialog.addEventListener("close", () => { document.body.style.overflow = ""; opener?.focus(); });
+    dialog.addEventListener("toggle", () => { if (dialog.open) document.body.style.overflow = "hidden"; });
+
+    let startX = null, startY = 0;
+    const stage = dialog.querySelector(".lb-stage");
+    stage.addEventListener("touchstart", (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; }, { passive: true });
+    stage.addEventListener("touchend", (e) => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX, dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? next : prev)();
+      startX = null;
+    });
+  })();
 
   // T-shirt front/back toggle
   const front = document.getElementById("shirt-front");
