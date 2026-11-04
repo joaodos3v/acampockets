@@ -324,11 +324,15 @@
     .lb-next { right: var(--gutter); }
     .lb-caption { padding-inline: 4.5rem; min-height: 4.5rem; }
   }
-  .photos .tall { grid-row: span 2; }
+  .photos .big { grid-column: span 2; grid-row: span 2; }
   .photos .wide { grid-column: span 2; }
+  .photos .more { display: none; } /* only reachable through the lightbox */
+  .photos [data-more]::after {
+    content: attr(data-more); position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none;
+    background: rgba(0, 0, 0, .55); font-family: var(--display); font-weight: 900; font-size: 2.6rem; color: var(--bone);
+  }
   @media (min-width: 800px) {
     .photos { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 12rem; gap: .8rem; }
-    .photos .big { grid-column: span 2; grid-row: span 2; }
   }
 
   /* camiseta */
@@ -554,15 +558,31 @@
         <h2>Último Mega Colab</h2>
         <p>No último Mega Colab, universitários de várias cidades se reuniram para adorar, orar e sonhar juntos com o avivamento nos campi. Foi ali que muita coisa começou.</p>
       </header>
-      <!-- Placeholders: trocar pelas fotos reais em assets/galeria/ -->
       <div class="photos">
-        <figure class="big tall"><img src="https://picsum.photos/seed/colab-01/900/900" alt="Galera reunida no Mega Colab" loading="lazy"></figure>
-        <figure class="tall"><img src="https://picsum.photos/seed/colab-02/500/800" alt="Momento de adoração" loading="lazy"></figure>
-        <figure><img src="https://picsum.photos/seed/colab-03/600/400" alt="Comunhão entre os participantes" loading="lazy"></figure>
-        <figure><img src="https://picsum.photos/seed/colab-04/600/400" alt="Participantes conversando" loading="lazy"></figure>
-        <figure class="wide"><img src="https://picsum.photos/seed/colab-05/1000/450" alt="Vista do auditório durante o louvor" loading="lazy"></figure>
-        <figure><img src="https://picsum.photos/seed/colab-06/600/400" alt="Oração em grupo" loading="lazy"></figure>
-        <figure><img src="https://picsum.photos/seed/colab-07/600/400" alt="Foto em grupo ao final do encontro" loading="lazy"></figure>
+        <figure class="big"><img src="assets/galeria/thumb/IMG_4161.jpg" data-full="assets/galeria/full/IMG_4161.jpg" alt="Galera reunida com as mãos levantadas em adoração" width="1200" height="800" loading="lazy"></figure>
+        <figure><img src="assets/galeria/thumb/IMG_3986.jpg" data-full="assets/galeria/full/IMG_3986.jpg" alt="Banda conduzindo o louvor" width="1200" height="800" loading="lazy"></figure>
+        <figure><img src="assets/galeria/thumb/IMG_4355.jpg" data-full="assets/galeria/full/IMG_4355.jpg" alt="Abraço entre participantes" width="1200" height="800" loading="lazy"></figure>
+        <figure><img src="assets/galeria/thumb/IMG_4438.jpg" data-full="assets/galeria/full/IMG_4438.jpg" alt="Oração com imposição de mãos" width="1200" height="800" loading="lazy"></figure>
+        <figure><img src="assets/galeria/thumb/IMG_4282.jpg" data-full="assets/galeria/full/IMG_4282.jpg" alt="Placa “Que bom que você veio!” na recepção" width="1200" height="800" loading="lazy"></figure>
+        <figure class="wide"><img src="assets/galeria/thumb/IMG_4261.jpg" data-full="assets/galeria/full/IMG_4261.jpg" alt="Hambúrgueres na grelha para a janta" width="1200" height="800" loading="lazy"></figure>
+        <figure><img src="assets/galeria/thumb/IMG_4110.jpg" data-full="assets/galeria/full/IMG_4110.jpg" alt="Jovem em oração durante a adoração" width="1200" height="800" loading="lazy"></figure>
+        <figure data-more="+16"><img src="assets/galeria/thumb/IMG_4436.jpg" data-full="assets/galeria/full/IMG_4436.jpg" alt="Grupo orando junto" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_3971.jpg" data-full="assets/galeria/full/IMG_3971.jpg" alt="Ministração no palco com os braços levantados" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4131.jpg" data-full="assets/galeria/full/IMG_4131.jpg" alt="Universitários atentos à ministração" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4155.jpg" data-full="assets/galeria/full/IMG_4155.jpg" alt="Galera reunida no auditório" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4201.jpg" data-full="assets/galeria/full/IMG_4201.jpg" alt="Pregação no palco" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4216.jpg" data-full="assets/galeria/full/IMG_4216.jpg" alt="Público ouvindo a palavra" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4271.jpg" data-full="assets/galeria/full/IMG_4271.jpg" alt="Montagem dos hambúrgueres na cozinha" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4272.jpg" data-full="assets/galeria/full/IMG_4272.jpg" alt="Hambúrguer servido na janta" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4273.jpg" data-full="assets/galeria/full/IMG_4273.jpg" alt="Ministração da palavra" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4294.jpg" data-full="assets/galeria/full/IMG_4294.jpg" alt="Jovens adorando juntos" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4310.jpg" data-full="assets/galeria/full/IMG_4310.jpg" alt="Momento de adoração no meio da galera" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4365.jpg" data-full="assets/galeria/full/IMG_4365.jpg" alt="Jovem em oração com as mãos juntas" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4369.jpg" data-full="assets/galeria/full/IMG_4369.jpg" alt="Participantes orando uns pelos outros" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4373.jpg" data-full="assets/galeria/full/IMG_4373.jpg" alt="Adoração de olhos fechados" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4381.jpg" data-full="assets/galeria/full/IMG_4381.jpg" alt="Louvor no palco" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4393.jpg" data-full="assets/galeria/full/IMG_4393.jpg" alt="Ministro de louvor com a mão levantada" width="1200" height="800" loading="lazy"></figure>
+        <figure class="more"><img src="assets/galeria/thumb/IMG_4440.jpg" data-full="assets/galeria/full/IMG_4440.jpg" alt="Participantes em oração" width="1200" height="800" loading="lazy"></figure>
       </div>
     </div>
   </section>
@@ -752,6 +772,7 @@
     const caption = dialog.querySelector(".lb-caption");
     const photos = [...document.querySelectorAll(".photos img")];
     let index = 0, opener = null;
+    const fullSrc = (photo) => photo.dataset.full || photo.currentSrc || photo.src;
 
     photos.forEach((photo, i) => {
       const btn = document.createElement("button");
@@ -765,7 +786,7 @@
 
     function show(i, dir) {
       index = (i + photos.length) % photos.length;
-      const src = photos[index].dataset.full || photos[index].currentSrc || photos[index].src;
+      const src = fullSrc(photos[index]);
       const apply = () => {
         img.src = src;
         img.alt = photos[index].alt;
@@ -779,7 +800,7 @@
         setTimeout(apply, 180);
       } else apply();
       // warm up the neighbours so swiping feels instant
-      [index - 1, index + 1].forEach((n) => { new Image().src = photos[(n + photos.length) % photos.length].src; });
+      [index - 1, index + 1].forEach((n) => { new Image().src = fullSrc(photos[(n + photos.length) % photos.length]); });
     }
     const next = () => show(index + 1, 1);
     const prev = () => show(index - 1, -1);
