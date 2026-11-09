@@ -326,8 +326,14 @@
   /* camiseta */
   .camiseta .grid { display: grid; gap: 2.5rem; }
   @media (min-width: 900px) { .camiseta .grid { grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; } }
-  .shirt-stage { position: relative; aspect-ratio: 4 / 5; border-radius: 1.25rem; overflow: hidden; background: var(--char-2); }
+  .shirt-stage {
+    position: relative; aspect-ratio: 1200 / 1442; border-radius: 1.25rem; overflow: hidden;
+    /* matches the studio backdrop of the back photo */
+    background: radial-gradient(ellipse at 50% 0%, #dfdcd5, #d2cfc8 70%);
+  }
   .shirt-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .45s ease; }
+  /* the front photo is narrower and on white: fit it whole and let its white melt into the backdrop */
+  .shirt-stage #shirt-front { object-fit: contain; padding-block: 4%; mix-blend-mode: multiply; }
   .shirt-stage img[aria-hidden="true"] { opacity: 0; }
   .shirt-toggle {
     position: absolute; left: 50%; bottom: 1rem; transform: translateX(-50%);
@@ -578,9 +584,8 @@
   <section class="camiseta" id="camiseta">
     <div class="wrap grid">
       <div class="shirt-stage">
-        <!-- Placeholders: trocar por assets/camiseta-frente.jpg e assets/camiseta-costas.jpg -->
-        <img id="shirt-front" src="https://picsum.photos/seed/shirt-front/800/1000" alt="Camiseta oficial, frente">
-        <img id="shirt-back" src="https://picsum.photos/seed/shirt-back/800/1000" alt="Camiseta oficial, costas" aria-hidden="true">
+        <img id="shirt-front" src="assets/camiseta/frente.jpg" alt="Camiseta oficial, frente: preta com o monograma DP no peito" width="647" height="1215">
+        <img id="shirt-back" src="assets/camiseta/costas.jpg" alt="Camiseta oficial, costas: mapa do Rio Grande do Sul com a frase “O Sul é de Jesus” e Atos 4:30" width="1200" height="1442" loading="lazy" aria-hidden="true">
         <div class="shirt-toggle" role="group" aria-label="Ver camiseta">
           <button type="button" data-side="front" aria-pressed="true">Frente</button>
           <button type="button" data-side="back" aria-pressed="false">Costas</button>
